@@ -6,6 +6,8 @@ import com.revanth.ecommerce.kafka.OrderConfirmation;
 import com.revanth.ecommerce.kafka.OrderProducer;
 import com.revanth.ecommerce.orderline.OrderLineRequest;
 import com.revanth.ecommerce.orderline.OrderLineService;
+import com.revanth.ecommerce.payment.PaymentClient;
+import com.revanth.ecommerce.payment.PaymentRequest;
 import com.revanth.ecommerce.product.ProductClient;
 import com.revanth.ecommerce.product.PurchaseRequest;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,6 +23,7 @@ public class OrderService {
 
     private final OrderRepository repository;
     private final CustomerClient customerClient;
+    private final PaymentClient paymentClient;
     private final ProductClient productClient;
     private final OrderMapper mapper;
     private final OrderLineService orderLineService;
@@ -45,7 +48,14 @@ public class OrderService {
             );
         }
 
-        // todo start payment process
+        var paymentRequest = new PaymentRequest(
+                request.amount(),
+                request.paymentMethod(),
+                order.getId(),
+                order.getReference(),
+                customer
+        );
+        paymentClient.requestOrderPayment(paymentRequest);
 
         orderProducer.sendOrderConfirmation(
                 new OrderConfirmation(

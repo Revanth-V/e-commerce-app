@@ -1,7 +1,6 @@
 package com.revanth.ecommerce.handler;
 
 import com.revanth.ecommerce.exception.BusinessException;
-import com.revanth.ecommerce.exception.ProductPurchaseException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
